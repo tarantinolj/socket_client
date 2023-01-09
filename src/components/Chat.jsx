@@ -1,61 +1,61 @@
-import React from "react";
-import io from "socket.io-client";
-import { useEffect } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
-import { useState } from "react";
-import EmojiPicker from "emoji-picker-react";
+import React from 'react'
+import io from 'socket.io-client'
+import { useEffect } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+import { useState } from 'react'
+import EmojiPicker from 'emoji-picker-react'
 
-import icon from "../images/emoji.svg";
-import styles from "../styles/Chat.module.css";
-import Messages from "./Messages";
+import icon from '../images/emoji.svg'
+import styles from '../styles/Chat.module.css'
+import Messages from './Messages'
 
-const socket = io.connect("https://online-chat-900l.onrender.com");
+const socket = io.connect('https://chat-r1ky.onrender.com')
 
 const Chat = () => {
-  const { search } = useLocation();
-  const navigate = useNavigate();
-  const [params, setParams] = useState({ room: "", user: "" });
-  const [state, setState] = useState([]);
-  const [message, setMessage] = useState("");
-  const [isOpen, setOpen] = useState(false);
-  const [users, setUsers] = useState(0);
+  const { search } = useLocation()
+  const navigate = useNavigate()
+  const [params, setParams] = useState({ room: '', user: '' })
+  const [state, setState] = useState([])
+  const [message, setMessage] = useState('')
+  const [isOpen, setOpen] = useState(false)
+  const [users, setUsers] = useState(0)
 
   useEffect(() => {
-    const searchParams = Object.fromEntries(new URLSearchParams(search));
-    setParams(searchParams);
-    socket.emit("join", searchParams);
-  }, [search]);
+    const searchParams = Object.fromEntries(new URLSearchParams(search))
+    setParams(searchParams)
+    socket.emit('join', searchParams)
+  }, [search])
 
   useEffect(() => {
-    socket.on("message", ({ data }) => {
-      setState((_state) => [..._state, data]);
-    });
-  }, []);
+    socket.on('message', ({ data }) => {
+      setState(_state => [..._state, data])
+    })
+  }, [])
 
   useEffect(() => {
-    socket.on("room", ({ data: { users } }) => {
-      setUsers(users.length);
-    });
-  }, []);
+    socket.on('room', ({ data: { users } }) => {
+      setUsers(users.length)
+    })
+  }, [])
 
   const leftRoom = () => {
-    socket.emit("leftRoom", { params });
-    navigate("/");
-  };
+    socket.emit('leftRoom', { params })
+    navigate('/')
+  }
 
-  const handleChange = ({ target: { value } }) => setMessage(value);
+  const handleChange = ({ target: { value } }) => setMessage(value)
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handleSubmit = e => {
+    e.preventDefault()
 
-    if (!message) return;
+    if (!message) return
 
-    socket.emit("sendMessage", { message, params });
+    socket.emit('sendMessage', { message, params })
 
-    setMessage("");
-  };
+    setMessage('')
+  }
 
-  const onEmojiClick = ({ emoji }) => setMessage(`${message} ${emoji}`);
+  const onEmojiClick = ({ emoji }) => setMessage(`${message} ${emoji}`)
 
   return (
     <div className={styles.wrap}>
@@ -98,7 +98,7 @@ const Chat = () => {
         </div>
       </form>
     </div>
-  );
-};
+  )
+}
 
-export default Chat;
+export default Chat
